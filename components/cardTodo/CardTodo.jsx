@@ -7,7 +7,7 @@ const CardTodo = ({ todos, onUpdateTodos }) => {
     <>
       {todos.map((todo) => {
         return (
-          <View style={style.container}>
+          <View style={style.container} key={todo.id}>
             <TouchableOpacity
               style={style.card}
               key={todo.id}
