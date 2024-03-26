@@ -18,6 +18,18 @@ const App = () => {
     { id: 9, title: 'Learn React Native', isCompleted: false },
   ]);
 
+  function updateTodos(id) {
+    const updatedTodos = todoList.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, isCompleted: !todo.isCompleted };
+      } else {
+        return todo;
+      }
+    });
+
+    setTodoList(updatedTodos);
+  }
+
   return (
     <>
       <SafeAreaProvider>
@@ -27,7 +39,11 @@ const App = () => {
           </View>
           <View style={style.body}>
             <ScrollView>
-              <CardTodo todos={todoList} />
+              <CardTodo
+                onUpdateTodos={updateTodos}
+                todos={todoList}
+                onSetTodos={setTodoList}
+              />
             </ScrollView>
           </View>
         </SafeAreaView>
