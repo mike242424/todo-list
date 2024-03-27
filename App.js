@@ -3,7 +3,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { style } from './App.style';
 import Header from './components/header/Header';
 import CardTodo from './components/cardTodo/CardTodo';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BottomTabMenu from './components/bottomTabMenu/BottomTabMenu';
 import AddButton from './components/addButton/AddButton';
 import Dialog from 'react-native-dialog';
@@ -18,6 +18,7 @@ const App = () => {
   const [currentlySelectedTab, setCurrentlySelectedTab] = useState('all');
   const [isVisible, setIsVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const scrollViewRef = useRef();
 
   useEffect(() => {
     getTodoList();
@@ -69,6 +70,10 @@ const App = () => {
     ]);
     setInputValue('');
     setIsVisible(false);
+    // waiting long enough for todo to be displayed
+    setTimeout(() => {
+      scrollViewRef.current.scrollToEnd();
+    }, 300);
   }
 
   function showAddTodoDialog() {
@@ -127,7 +132,7 @@ const App = () => {
             <Header />
           </View>
           <View style={style.body}>
-            <ScrollView>
+            <ScrollView ref={scrollViewRef}>
               <CardTodo
                 onUpdateTodoIsCompleted={updateTodoIsCompleted}
                 todos={getFilteredList()}
