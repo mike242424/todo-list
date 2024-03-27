@@ -4,6 +4,7 @@ import { style } from './App.style';
 import Header from './components/header/Header';
 import CardTodo from './components/cardTodo/CardTodo';
 import { useState } from 'react';
+import BottomTabMenu from './components/bottomTabMenu/BottomTabMenu';
 
 const App = () => {
   const [todoList, setTodoList] = useState([
@@ -17,6 +18,7 @@ const App = () => {
     { id: 8, title: 'Take out the trash', isCompleted: false },
     { id: 9, title: 'Learn React Native', isCompleted: false },
   ]);
+  const [currentlySelectedTab, setCurrentlySelectedTab] = useState('all');
 
   function updateTodos(id) {
     const updatedTodos = todoList.map((todo) => {
@@ -49,7 +51,10 @@ const App = () => {
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={style.footer}>
-        <Text>Footer</Text>
+        <BottomTabMenu
+          currentlySelectedTab={currentlySelectedTab}
+          onSetCurrentlySelectedTab={setCurrentlySelectedTab}
+        />
       </View>
     </>
   );
