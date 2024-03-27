@@ -3,17 +3,60 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { style } from './App.style';
 import Header from './components/header/Header';
 import CardTodo from './components/cardTodo/CardTodo';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BottomTabMenu from './components/bottomTabMenu/BottomTabMenu';
 import AddButton from './components/addButton/AddButton';
 import Dialog from 'react-native-dialog';
 import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+let isFirstRender = true;
+let isLoadUpdate = false;
 
 const App = () => {
   const [todoList, setTodoList] = useState([]);
   const [currentlySelectedTab, setCurrentlySelectedTab] = useState('all');
   const [isVisible, setIsVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    getTodoList();
+  }, []);
+
+  useEffect(() => {
+    // code for removing extra saveTodoList() renders
+    if (!isLoadUpdate) {
+      if (!isFirstRender) {
+        saveTodoList();
+      } else {
+        isFirstRender = false;
+      }
+    } else {
+      isLoadUpdate = false;
+    }
+  }, [todoList]);
+
+  async function saveTodoList() {
+    try {
+      console.log('save');
+      const jsonTodoList = JSON.stringify(todoList);
+      await AsyncStorage.setItem('todoList', jsonTodoList);
+    } catch (e) {
+      alert(err);
+    }
+  }
+
+  async function getTodoList() {
+    try {
+      console.log('get');
+      const jsonTodoList = await AsyncStorage.getItem('todoList');
+      const parsedTodoList = JSON.parse(jsonTodoList);
+      setTodoList(parsedTodoList || []);
+      isLoadUpdate = true;
+    } catch (e) {
+      alert(err);
+    }
+  }
 
   function addTodo() {
     setTodoList([
