@@ -5,20 +5,36 @@ import Header from './components/header/Header';
 import CardTodo from './components/cardTodo/CardTodo';
 import { useState } from 'react';
 import BottomTabMenu from './components/bottomTabMenu/BottomTabMenu';
+import AddButton from './components/addButton/AddButton';
+import Dialog from 'react-native-dialog';
+import uuid from 'react-native-uuid';
 
 const App = () => {
-  const [todoList, setTodoList] = useState([
-    { id: 1, title: 'Walk the dog', isCompleted: true },
-    { id: 2, title: 'Take out the trash', isCompleted: false },
-    { id: 3, title: 'Learn React Native', isCompleted: false },
-    { id: 4, title: 'Walk the dog', isCompleted: true },
-    { id: 5, title: 'Take out the trash', isCompleted: false },
-    { id: 6, title: 'Learn React Native', isCompleted: false },
-    { id: 7, title: 'Walk the dog', isCompleted: true },
-    { id: 8, title: 'Take out the trash', isCompleted: false },
-    { id: 9, title: 'Learn React Native', isCompleted: false },
-  ]);
+  const [todoList, setTodoList] = useState([]);
   const [currentlySelectedTab, setCurrentlySelectedTab] = useState('all');
+  const [isVisible, setIsVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  function addTodo() {
+    setTodoList([
+      ...todoList,
+      {
+        id: uuid.v4(),
+        title: inputValue,
+        isCompleted: false,
+      },
+    ]);
+    setInputValue('');
+    setIsVisible(false);
+  }
+
+  function showAddTodoDialog() {
+    setIsVisible(true);
+  }
+
+  function closeAddTodoDialog() {
+    setIsVisible(false);
+  }
 
   function getFilteredList() {
     switch (currentlySelectedTab) {
@@ -77,6 +93,7 @@ const App = () => {
               />
             </ScrollView>
           </View>
+          <AddButton onPress={showAddTodoDialog} />
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={style.footer}>
@@ -86,6 +103,28 @@ const App = () => {
           onSetCurrentlySelectedTab={setCurrentlySelectedTab}
         />
       </View>
+
+      <Dialog.Container
+        visible={isVisible}
+        onBackdropPress={closeAddTodoDialog}
+      >
+        <Dialog.Title>Add New Todo</Dialog.Title>
+        <Dialog.Description>CHoose a name for your todo</Dialog.Description>
+        <Dialog.Input
+          placeholder="Ex: Go to the gym"
+          onChangeText={setInputValue}
+        />
+        <Dialog.Button
+          label="Cancel"
+          onPress={closeAddTodoDialog}
+          color="grey"
+        />
+        <Dialog.Button
+          disabled={!inputValue}
+          label="Add"
+          onPress={() => addTodo(inputValue)}
+        />
+      </Dialog.Container>
     </>
   );
 };
