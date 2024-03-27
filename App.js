@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { style } from './App.style';
 import Header from './components/header/Header';
@@ -20,7 +20,20 @@ const App = () => {
   ]);
   const [currentlySelectedTab, setCurrentlySelectedTab] = useState('all');
 
-  function updateTodos(id) {
+  function getFilteredList() {
+    switch (currentlySelectedTab) {
+      case 'all':
+        return todoList;
+      case 'inProgress':
+        return todoList.filter((todo) => !todo.isCompleted);
+      case 'done':
+        return todoList.filter((todo) => todo.isCompleted);
+      default:
+        break;
+    }
+  }
+
+  function updateTodoIsCompleted(id) {
     const updatedTodos = todoList.map((todo) => {
       if (todo.id === id) {
         return { ...todo, isCompleted: !todo.isCompleted };
@@ -30,6 +43,21 @@ const App = () => {
     });
 
     setTodoList(updatedTodos);
+  }
+
+  function deleteTodo(todo) {
+    Alert.alert('Delete todo?', 'Are you sure you want to delete this todo?', [
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          setTodoList(
+            todoList.filter((filteredTodo) => todo.id !== filteredTodo.id),
+          );
+        },
+      },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   }
 
   return (
@@ -42,9 +70,10 @@ const App = () => {
           <View style={style.body}>
             <ScrollView>
               <CardTodo
-                onUpdateTodos={updateTodos}
-                todos={todoList}
+                onUpdateTodoIsCompleted={updateTodoIsCompleted}
+                todos={getFilteredList()}
                 onSetTodos={setTodoList}
+                onLongPress={deleteTodo}
               />
             </ScrollView>
           </View>
@@ -52,6 +81,7 @@ const App = () => {
       </SafeAreaProvider>
       <View style={style.footer}>
         <BottomTabMenu
+          todos={todoList}
           currentlySelectedTab={currentlySelectedTab}
           onSetCurrentlySelectedTab={setCurrentlySelectedTab}
         />

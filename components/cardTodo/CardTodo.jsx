@@ -1,8 +1,8 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 import { style } from './CardTodo.style';
 import checkedIcon from '../../assets/check.png';
 
-const CardTodo = ({ todos, onUpdateTodos }) => {
+const CardTodo = ({ todos, onUpdateTodoIsCompleted, onLongPress }) => {
   return (
     <>
       {todos.map((todo) => {
@@ -11,7 +11,8 @@ const CardTodo = ({ todos, onUpdateTodos }) => {
             <TouchableOpacity
               style={style.card}
               key={todo.id}
-              onPress={() => onUpdateTodos(todo.id)}
+              onPress={() => onUpdateTodoIsCompleted(todo.id)}
+              onLongPress={() => onLongPress(todo)}
             >
               <Text
                 style={[
